@@ -1,111 +1,222 @@
 #include <iostream>
-using namespace std;
 #include <string>
 #include <stdlib.h>
-unsigned int convert4bytesToInt(unsigned char* bytes)
-{
-	unsigned int result = *(int*)bytes;
-	return result;
-}
+#include <vector>
+using namespace std;
+class Hash {
 
-void convertIntTo4bytes(unsigned char* bytes, unsigned int num)
-{
-	bytes[3] = (num >> 24) & 0xFF;
-	bytes[2] = (num >> 16) & 0xFF;
-	bytes[1] = (num >> 8) & 0xFF;
-	bytes[0] = num & 0xFF;
-}
-
-unsigned char hashFunction(unsigned char arr[8], unsigned char key)
-{
-	unsigned int x = convert4bytesToInt(arr);
-	unsigned int y = convert4bytesToInt(arr + 4);
-	x = (x * 24001) % 22027;
-	y = (y * 21661) % 20897;
-	convertIntTo4bytes(arr, x);
-	convertIntTo4bytes(arr + 4, y);
-	return (x + y) % key;
-}
-
-// a[i] = false => 23
-bool* getValidateArray(unsigned char username[8], unsigned int size)
-{
-	const unsigned char hash_array = 4;
-	bool* validate_array = new bool[size];
-	for (int i = 0; i < size; i++)
+public:
+	static unsigned char bytes[8];
+	static void setBytes(unsigned char bytes[8])
 	{
-		validate_array[i] = (hashFunction(username, hash_array) == 0) ? false : true;
+		copy(bytes, bytes + 8, Hash::bytes);
 	}
-	return validate_array;
-}
-
-unsigned int formulating(unsigned int Const, unsigned int x, unsigned int y)
-{
-	return (x * Const + y);
-}
-
-struct KeyCondition
-{
-	unsigned int x, y, check_value, hash_value;
-	bool* validate_array;
-	KeyCondition(unsigned hash_value, unsigned int x, unsigned int y, unsigned int check_value, bool* validate_arry)
+	static unsigned int convert4bytesToInt(unsigned char* bytes)
 	{
-		this->hash_value = hash_value;
-		this->x = x;
-		this->y = y;
-		this->check_value = check_value;
-		this->validate_array = validate_array;
+		unsigned int result = *(int*)bytes;
+		return result;
 	}
-	bool isKey()
+
+	static void convertIntTo4bytes(unsigned char* bytes, unsigned int num)
 	{
-		return formulating(this->hash_value, this->x, this->y) == this->check_value;
+		bytes[3] = (num >> 24) & 0xFF;
+		bytes[2] = (num >> 16) & 0xFF;
+		bytes[1] = (num >> 8) & 0xFF;
+		bytes[0] = num & 0xFF;
 	}
-	bool isValid()
+
+	static unsigned char hashFunction(unsigned char key)
 	{
-		return validate_array[formulating(this->hash_value, this->x, this->y)];
+		unsigned int x = convert4bytesToInt(bytes);
+		unsigned int y = convert4bytesToInt(bytes + 4);
+		x = (x * 24001) % 22027;
+		y = (y * 21661) % 20897;
+		convertIntTo4bytes(bytes, x);
+		convertIntTo4bytes(bytes + 4, y);
+		return (x + y) % key;
 	}
 };
-string keyGenerate(string key, KeyCondition *key_condition)
+unsigned char Hash::bytes[8];
+
+class Formula
 {
+public:
+	static int Const;
+	static void setConst(int Const)
+	{
+		Formula::Const = Const;
+	}
+	static unsigned int get(unsigned int x, unsigned int y)
+	{
+		return (x * Const + y);
+	}
+};
 
-}
+int Formula::Const = 0;
 
-void keyGenerator(string& key, KeyCondition *key_condition)
+class Validate
 {
-	
-}
+public:
+	int size;
+	bool* arr;
 
-string generateKey(unsigned char username[8])
+	// arr[i] = false <=> 23
+	Validate(unsigned char hash_value, unsigned char hash_key)
+	{
+		this->size = (hash_value + hash_key);
+		this->size = size * size;
+
+		const unsigned char hash_validate = 4;
+
+		this->arr = new bool[this->size];
+
+		for (int i = 0; i < this->size; i++)
+		{
+			this->arr[i] = (Hash::hashFunction(hash_validate) == 0) ? false : true;
+		}
+	}
+	~Validate()
+	{
+		if (arr != NULL)
+			delete arr;
+	}
+	bool isValid(unsigned int x, unsigned int y)
+	{
+		int index = Formula::get(x, y);
+		if (index < 0 || x < 0 || y < 0 || index >= size)
+			return false;
+		return arr[index];
+	}
+};
+
+class KeyTest
 {
-	const unsigned char hash_key = 14;
-
-	unsigned char hash_value = hashFunction(username, hash_key);
-	
-	unsigned int size = (hash_value + hash_key);
-	size = size * size;
-
-	bool* validate_array = getValidateArray(username, size);
-
-	unsigned char value_2 = hashFunction(username, hash_value);	// B0
-	unsigned char value_1 = hashFunction(username, hash_value);	// AC
-	unsigned char value_3,	// B4
-		value_4;	// B8
-
-	while ((value_3 = hashFunction(username, hash_value)) == value_1);
-	while ((value_4 = hashFunction(username, hash_value)) == value_2);
+public:
+	unsigned int x, y, rx, ry;
+	unsigned int check_value;
+	Validate* validate;
+	string key;
 
 	// check if (AC * hash_value + B0 == B4 * hash_value + B8)
-	unsigned int check_value = formulating(hash_value, value_3, value_4);
 
 	// check condition = f(a, 1, 2) == check_value = f(a, 3, 4)
 	// key condition = arr[f(a,1,2)] = true
-	
-	KeyCondition key_condition(hash_value, value_1, value_2, check_value, validate_array);
-	string key = "";
-	keyGenerator(key, &key_condition);
-	return key;
-}
 
+	KeyTest(unsigned int x, unsigned int y, unsigned int rx, unsigned ry, Validate* validate)
+	{
+		this->key = "";
+
+		this->x = x;
+		this->y = y;
+
+		this->rx = rx;
+		this->ry = ry;
+
+		this->validate = validate;
+
+		this->check_value = Formula::get(this->rx, this->ry);
+	}
+	bool isKey()
+	{
+		return Formula::get(this->x, this->y) == this->check_value;
+	}
+	void getNextBestMoves(vector<unsigned char >& next_moves)
+	{
+		// value_1: {l: --, r: ++}
+		// value_2: {u: --, d: ++}
+
+		unsigned char moves[4] = { 'l', 'd', 'u', 'r' };
+		for (int i = 0; i < 4; i++)
+		{
+			unsigned new_x = this->x;
+			unsigned new_y = this->y;
+			switch (moves[i])
+			{
+			case 'l':
+				new_x--;
+				break;
+			case 'r':
+				new_x++;
+				break;
+			case 'u':
+				new_y--;
+				break;
+			case 'd':
+				new_y++;
+				break;	
+			}
+			if (this->validate->isValid(new_x, new_y))
+			{
+				next_moves.push_back(moves[i]);
+				// try to limit number of wrong direction moves
+			}
+		}
+
+		// sort in order closeset to (rx, ry)
+	}
+
+	void addMove(unsigned char move)
+	{
+		key += move;
+	}
+	void removeLastMove()
+	{
+		this->key.pop_back();
+	}
+};
+
+
+class KeyGenerator {
+public:
+	unsigned char hash_value;
+	const unsigned char hash_key = 14;
+
+	KeyGenerator(unsigned char username[8])
+	{
+		Hash::setBytes(username);
+
+		hash_value = Hash::hashFunction(hash_key);
+
+		Formula::setConst(hash_value);
+	}
+
+	bool keyGenerator(KeyTest* key_test)
+	{
+		if (key_test->isKey())
+			return true;
+
+		vector<unsigned char> next_moves;
+		key_test->getNextBestMoves(next_moves);
+
+		for (unsigned char move : next_moves)
+		{
+			key_test->addMove(move);
+			if (keyGenerator(key_test))
+				return true;
+			key_test->removeLastMove();
+		}
+
+		return false;
+	}
+
+
+	string getKey()
+	{
+		Validate validate(hash_value, hash_key);
+
+		unsigned char value_2 = Hash::hashFunction(hash_value);	// B0
+		unsigned char value_1 = Hash::hashFunction(hash_value);	// AC
+		unsigned char value_3,	// B4
+			value_4;	// B8
+
+		while ((value_3 = Hash::hashFunction(hash_value)) == value_1);
+		while ((value_4 = Hash::hashFunction(hash_value)) == value_2);
+
+		KeyTest key_test(value_1, value_2, value_3, value_4, &validate);
+
+		return (this->keyGenerator(&key_test)) ? key_test.key : "not found";
+	}
+};
 
 void main()
 {
@@ -120,7 +231,8 @@ void main()
 	cout << "Nhap vao username: ";
 	cin >> username;
 
-	string key = generateKey(username);
+	KeyGenerator key_gen(username);
+	string key = key_gen.getKey();
 
 	cout << "Key cua ban la: " << key << endl;
 
