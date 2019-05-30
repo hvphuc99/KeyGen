@@ -143,7 +143,7 @@ public:
 				break;
 			case 'd':
 				new_y++;
-				break;	
+				break;
 			}
 			if (this->validate->isValid(new_x, new_y))
 			{
@@ -158,9 +158,44 @@ public:
 	void addMove(unsigned char move)
 	{
 		key += move;
+		// go to new state
+		switch (move)
+		{
+		case 'l':
+			this->x--;
+			break;
+		case 'r':
+			this->x++;
+			break;
+		case 'u':
+			this->y--;
+			break;
+		case 'd':
+			this->y++;
+			break;
+		}
 	}
 	void removeLastMove()
 	{
+		char move = this->key.back();
+
+		// back to new state
+		switch (move)
+		{
+		case 'l':
+			this->x++;
+			break;
+		case 'r':
+			this->x--;
+			break;
+		case 'u':
+			this->y++;
+			break;
+		case 'd':
+			this->y--;
+			break;
+		}
+
 		this->key.pop_back();
 	}
 };
