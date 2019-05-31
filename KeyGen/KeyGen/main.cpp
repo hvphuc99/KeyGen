@@ -90,6 +90,11 @@ public:
 			return false;
 		return arr[index];
 	}
+	void toogle(unsigned int x, unsigned int y, bool value)
+	{
+		int index = Formula::get(x, y);
+		this->arr[index] = value;
+	}
 };
 
 class KeyTest
@@ -114,21 +119,21 @@ public:
 
 		this->rx = rx;
 		this->ry = ry;
-
+		
 		this->validate = validate;
-
-		this->check_value = Formula::get(this->rx, this->ry);
+		this->validate->toogle(this->rx, this->ry, true);
+		this->validate->toogle(this->x, this->y, false);
 	}
 	bool isKey()
 	{
-		return Formula::get(this->x, this->y) == this->check_value;
+		return (this->x == this->rx && this->y == this->ry);
 	}
 	void getNextBestMoves(vector<unsigned char >& next_moves)
 	{
 		// value_1: {l: --, r: ++}
 		// value_2: {u: --, d: ++}
 
-		unsigned char moves[4] = { 'l', 'd', 'u', 'r' };
+		unsigned char moves[4] = { 'l', 'r', 'd', 'u' };
 		for (int i = 0; i < 4; i++)
 		{
 			unsigned new_x = this->x;
@@ -177,11 +182,13 @@ public:
 			this->y++;
 			break;
 		}
+		validate->toogle(this->x, this->y, false);
 	}
 	void removeLastMove()
 	{
 		char move = this->key.back();
 
+		validate->toogle(this->x, this->y, true);
 		// back to new state
 		switch (move)
 		{
@@ -222,10 +229,7 @@ public:
 	{
 		if (key_test->isKey())
 			return true;
-		if (key_test->key.size() >= 25) {
-			return false;
-		}
-		cout << key_test->key << endl;
+		// cout << key_test->key << endl;
 		vector<unsigned char> next_moves;
 		key_test->getNextBestMoves(next_moves);
 
@@ -255,7 +259,7 @@ public:
 
 		KeyTest key_test(value_1, value_2, value_3, value_4, &validate);
 
-		return (this->keyGenerator(&key_test)) ? key_test.key : "not found";
+		return (this->keyGenerator(&key_test)) ? key_test.key : "unsolvable";
 	}
 };
 
