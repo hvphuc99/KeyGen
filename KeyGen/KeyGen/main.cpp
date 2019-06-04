@@ -2,6 +2,7 @@
 #include <string>
 #include <stdlib.h>
 #include <vector>
+#include <string.h>
 using namespace std;
 class Hash {
 
@@ -184,15 +185,16 @@ public:
 			return true;
 		}
 		this->matrix->set(x, y, HashMatrix::VISITED);
-		if (this->keySearching(x + 1, y))
-		{
-			this->key = 'r' + this->key;
-			return true;
-		}
 
 		if (this->keySearching(x - 1, y))
 		{
 			this->key = 'l' + this->key;
+			return true;
+		}
+
+		if (this->keySearching(x + 1, y))
+		{
+			this->key = 'r' + this->key;
 			return true;
 		}
 
@@ -231,8 +233,14 @@ void main()
 	unsigned char username[8] = { 0 };
 	while (true)
 	{
-		cout << "Nhap vao username: ";
-		cin >> username;
+		int len = 0;
+		while (len < 5 || len > 8)
+		{
+			cout << "Nhap vao username (5-8): ";
+			cin >> username;
+			len = strlen((const char *)username);
+		}
+
 		KeyGenerator key_gen(username);
 		string key = key_gen.getKey();
 
