@@ -7,7 +7,7 @@ class Hash {
 
 public:
 	static unsigned char bytes[8];
-	static void setBytes(unsigned char bytes[8])
+	static void setBytes(const unsigned char bytes[8])
 	{
 		copy(bytes, bytes + 8, Hash::bytes);
 	}
@@ -28,254 +28,400 @@ public:
 	static unsigned char hashFunction(unsigned char key)
 	{
 		unsigned int x = convert4bytesToInt(bytes);
-		unsigned int y = convert4bytesToInt(bytes + 4); 
+		unsigned int y = convert4bytesToInt(bytes + 4);
 		x = (x * 24001) % 22027;
 		y = (y * 21661) % 20897;
 		convertIntTo4bytes(bytes, x);
 		convertIntTo4bytes(bytes + 4, y);
 		unsigned int sum = x + y;
-		unsigned int rem = sum % (unsigned int) key;
+		unsigned int rem = sum % (unsigned int)key;
 		return rem;
 	}
 };
 unsigned char Hash::bytes[8];
 
-class Formula
+//class Formula
+//{
+//public:
+//	static int Const;
+//	static void setConst(int Const)
+//	{
+//		Formula::Const = Const;
+//	}
+//	static unsigned int get(unsigned int x, unsigned int y)
+//	{
+//		return (x * Const + y);
+//	}
+//};
+//
+//int Formula::Const = 0;
+
+// class Validate
+// {
+// public:
+// 	int size;
+// 	bool* arr;
+// 
+// 	// arr[i] = false <=> 23
+// 	Validate(unsigned char hash_value, unsigned char hash_key)
+// 	{
+// 		this->size = (hash_value + hash_key);
+// 		this->size = size * size;
+// 
+// 		const unsigned char hash_validate = 4;
+// 
+// 		this->arr = new bool[this->size];
+// 
+// 		for (int i = 0; i < this->size; i++)
+// 		{
+// 			unsigned int tmp = Hash::hashFunction(hash_validate);
+// 			this->arr[i] = (tmp == 0) ? false : true;
+// 		}
+// 	}
+// 	~Validate()
+// 	{
+// 		if (arr != NULL)
+// 			delete arr;
+// 	}
+// 	bool isValid(unsigned int x, unsigned int y)
+// 	{
+// 		int index = Formula::get(x, y);
+// 		if (index < 0 || x < 0 || y < 0 || index >= size)
+// 			return false;
+// 		return arr[index];
+// 	}
+// 	void toogle(unsigned int x, unsigned int y, bool value)
+// 	{
+// 		int index = Formula::get(x, y);
+// 		this->arr[index] = value;
+// 	}
+// };
+// 
+// class KeyTest
+// {
+// public:
+// 	unsigned int x, y, rx, ry;
+// 	unsigned int check_value;
+// 	Validate* validate;
+// 	string key;
+// 
+// 	// check if (AC * hash_value + B0 == B4 * hash_value + B8)
+// 
+// 	// check condition = f(a, 1, 2) == check_value = f(a, 3, 4)
+// 	// key condition = arr[f(a,1,2)] = true
+// 
+// 	KeyTest(unsigned int x, unsigned int y, unsigned int rx, unsigned ry, Validate* validate)
+// 	{
+// 		this->key = "";
+// 
+// 		this->x = x;
+// 		this->y = y;
+// 
+// 		this->rx = rx;
+// 		this->ry = ry;
+// 
+// 		this->validate = validate;
+// 		this->validate->toogle(this->rx, this->ry, true);
+// 		this->validate->toogle(this->x, this->y, false);
+// 	}
+// 	bool isKey()
+// 	{
+// 		return (this->x == this->rx && this->y == this->ry);
+// 	}
+// 	void getNextBestMoves(vector<unsigned char > & next_moves)
+// 	{
+// 		// value_1: {l: --, r: ++}
+// 		// value_2: {u: --, d: ++}
+// 
+// 		unsigned char moves[4] = { 'l', 'r', 'd', 'u' };
+// 		for (int i = 0; i < 4; i++)
+// 		{
+// 			unsigned new_x = this->x;
+// 			unsigned new_y = this->y;
+// 			switch (moves[i])
+// 			{
+// 			case 'l':
+// 				new_x--;
+// 				break;
+// 			case 'r':
+// 				new_x++;
+// 				break;
+// 			case 'u':
+// 				new_y--;
+// 				break;
+// 			case 'd':
+// 				new_y++;
+// 				break;
+// 			}
+// 			if (this->validate->isValid(new_x, new_y))
+// 			{
+// 				next_moves.push_back(moves[i]);
+// 				// try to limit number of wrong direction moves
+// 			}
+// 		}
+// 
+// 		// sort in order closeset to (rx, ry)
+// 	}
+// 
+// 	void addMove(unsigned char move)
+// 	{
+// 		key += move;
+// 		// go to new state
+// 		switch (move)
+// 		{
+// 		case 'l':
+// 			this->x--;
+// 			break;
+// 		case 'r':
+// 			this->x++;
+// 			break;
+// 		case 'u':
+// 			this->y--;
+// 			break;
+// 		case 'd':
+// 			this->y++;
+// 			break;
+// 		}
+// 		validate->toogle(this->x, this->y, false);
+// 	}
+// 	void removeLastMove()
+// 	{
+// 		char move = this->key.back();
+// 
+// 		validate->toogle(this->x, this->y, true);
+// 		// back to new state
+// 		switch (move)
+// 		{
+// 		case 'l':
+// 			this->x++;
+// 			break;
+// 		case 'r':
+// 			this->x--;
+// 			break;
+// 		case 'u':
+// 			this->y++;
+// 			break;
+// 		case 'd':
+// 			this->y--;
+// 			break;
+// 		}
+// 
+// 		this->key.pop_back();
+// 	}
+// };
+
+
+// class KeyGenerator {
+// public:
+// 	unsigned char hash_value;
+// 	const unsigned char hash_key = 20;
+// 
+// 	KeyGenerator(unsigned char username[8])
+// 	{
+// 		Hash::setBytes(username);
+// 
+// 		hash_value = Hash::hashFunction(hash_key);
+// 
+// 		Formula::setConst(hash_value + hash_key);
+// 	}
+// 
+// 	bool keyGenerator(KeyTest * key_test)
+// 	{
+// 		if (key_test->isKey())
+// 			return true;
+// 		// cout << key_test->key << endl;
+// 		vector<unsigned char> next_moves;
+// 		key_test->getNextBestMoves(next_moves);
+// 
+// 		for (unsigned char move : next_moves)
+// 		{
+// 			key_test->addMove(move);
+// 			if (keyGenerator(key_test))
+// 				return true;
+// 			key_test->removeLastMove();
+// 		}
+// 
+// 		return false;
+// 	}
+// 
+// 
+// 	string getKey()
+// 	{
+// 		Validate validate(hash_value, hash_key);
+// 		hash_value += hash_key;
+// 		unsigned char value_1 = Hash::hashFunction(hash_value);	// AC
+// 		unsigned char value_2 = Hash::hashFunction(hash_value);	// B0
+// 		unsigned char value_3,	// B4
+// 			value_4;	// B8
+// 
+// 		while ((value_3 = Hash::hashFunction(hash_value)) == value_1);
+// 		while ((value_4 = Hash::hashFunction(hash_value)) == value_2);
+// 
+// 		KeyTest key_test(value_1, value_2, value_3, value_4, &validate);
+// 
+// 		return (this->keyGenerator(&key_test)) ? key_test.key : "unsolvable";
+// 	}
+// };
+class Point2D
 {
 public:
-	static int Const;
-	static void setConst(int Const)
+	Point2D(char x, char y)
 	{
-		Formula::Const = Const;
-	}
-	static unsigned int get(unsigned int x, unsigned int y)
-	{
-		return (x * Const + y);
-	}
-};
-
-int Formula::Const = 0;
-
-class Validate
-{
-public:
-	int size;
-	bool* arr;
-
-	// arr[i] = false <=> 23
-	Validate(unsigned char hash_value, unsigned char hash_key)
-	{
-		this->size = (hash_value + hash_key);
-		this->size = size * size;
-
-		const unsigned char hash_validate = 4;
-
-		this->arr = new bool[this->size];
-
-		for (int i = 0; i < this->size; i++)
-		{
-			unsigned int tmp = Hash::hashFunction(hash_validate);
-			this->arr[i] = (tmp == 0) ? false : true;
-		}
-	}
-	~Validate()
-	{
-		if (arr != NULL)
-			delete arr;
-	}
-	bool isValid(unsigned int x, unsigned int y)
-	{
-		int index = Formula::get(x, y);
-		if (index < 0 || x < 0 || y < 0 || index >= size)
-			return false;
-		return arr[index];
-	}
-	void toogle(unsigned int x, unsigned int y, bool value)
-	{
-		int index = Formula::get(x, y);
-		this->arr[index] = value;
-	}
-};
-
-class KeyTest
-{
-public:
-	unsigned int x, y, rx, ry;
-	unsigned int check_value;
-	Validate* validate;
-	string key;
-
-	// check if (AC * hash_value + B0 == B4 * hash_value + B8)
-
-	// check condition = f(a, 1, 2) == check_value = f(a, 3, 4)
-	// key condition = arr[f(a,1,2)] = true
-
-	KeyTest(unsigned int x, unsigned int y, unsigned int rx, unsigned ry, Validate* validate)
-	{
-		this->key = "";
-
 		this->x = x;
 		this->y = y;
+	}
+	Point2D()
+	{
 
-		this->rx = rx;
-		this->ry = ry;
+	}
+	char x, y;
+};
+
+class HashMatrix
+{
+public:
+	const unsigned char hash_key = 20;
+	const unsigned char hash_element_key = 4;
+	static const enum state { OBSTACLE, MOVABLE, VISITED, SOURCE, DESTINATION };
+public:
+	HashMatrix(unsigned char username[8])
+	{
+		Hash::setBytes(username);
+
+		//this->hash_value = Hash::hashFunction(hash_key);
+		this->size = Hash::hashFunction(hash_key) + this->hash_key;
+
+		this->matrix = new state * [size];
+		for (int i = 0; i < size; i++)
+		{
+			this->matrix[i] = new state[size];
+		}
+
+		for (int i = 0; i < size; i++)
+		{
+			for (int j = 0; j < size; j++)
+			{
+				this->matrix[i][j] = (Hash::hashFunction(hash_element_key) == 0) ? OBSTACLE: MOVABLE;
+			}
+		}
+
+		// evaluate source
+		this->source = Point2D(Hash::hashFunction(this->size), Hash::hashFunction(this->size));
+
+		// set source
+		this->set(source.x, source.y, MOVABLE);
+
+		// evaluate destion
+		char x_destination, y_destination;
+
+		while ((x_destination = Hash::hashFunction(this->size)) == source.x);
+		while ((y_destination = Hash::hashFunction(this->size)) == source.y);
+
+		Point2D destination(Hash::hashFunction(this->size), Hash::hashFunction(this->size));
 		
-		this->validate = validate;
-		this->validate->toogle(this->rx, this->ry, true);
-		this->validate->toogle(this->x, this->y, false);
+		// set destination
+		this->set(destination.x, destination.y, DESTINATION);
 	}
-	bool isKey()
+	void set(int x, int y, enum state value)
 	{
-		return (this->x == this->rx && this->y == this->ry);
+		this->matrix[x][y] = value;
 	}
-	void getNextBestMoves(vector<unsigned char >& next_moves)
-	{
-		// value_1: {l: --, r: ++}
-		// value_2: {u: --, d: ++}
 
-		unsigned char moves[4] = { 'l', 'r', 'd', 'u' };
-		for (int i = 0; i < 4; i++)
+	bool isMovable(int x, int y)
+	{
+		return (x >= 0 && y >= 0 && x < this->size && y < this->size && this->matrix[x][y] == MOVABLE);
+	}
+
+	bool hasArrived(int x, int y)
+	{
+		return (this->matrix[x][y] == DESTINATION);
+	}
+
+	Point2D getSource()
+	{
+		return this->source;
+	}
+
+	~HashMatrix()
+	{
+		for (int i = 0; i < size; i++)
 		{
-			unsigned new_x = this->x;
-			unsigned new_y = this->y;
-			switch (moves[i])
-			{
-			case 'l':
-				new_x--;
-				break;
-			case 'r':
-				new_x++;
-				break;
-			case 'u':
-				new_y--;
-				break;
-			case 'd':
-				new_y++;
-				break;
-			}
-			if (this->validate->isValid(new_x, new_y))
-			{
-				next_moves.push_back(moves[i]);
-				// try to limit number of wrong direction moves
-			}
+			delete[] matrix[i];
 		}
-
-		// sort in order closeset to (rx, ry)
+		delete[] matrix;
 	}
 
-	void addMove(unsigned char move)
-	{
-		key += move;
-		// go to new state
-		switch (move)
-		{
-		case 'l':
-			this->x--;
-			break;
-		case 'r':
-			this->x++;
-			break;
-		case 'u':
-			this->y--;
-			break;
-		case 'd':
-			this->y++;
-			break;
-		}
-		validate->toogle(this->x, this->y, false);
-	}
-	void removeLastMove()
-	{
-		char move = this->key.back();
-
-		validate->toogle(this->x, this->y, true);
-		// back to new state
-		switch (move)
-		{
-		case 'l':
-			this->x++;
-			break;
-		case 'r':
-			this->x--;
-			break;
-		case 'u':
-			this->y++;
-			break;
-		case 'd':
-			this->y--;
-			break;
-		}
-
-		this->key.pop_back();
-	}
+private:
+	int size;
+	int hash_value;
+	enum state** matrix;
+	Point2D source;
 };
 
 
 class KeyGenerator {
 public:
-	unsigned char hash_value;
-	const unsigned char hash_key = 20;
 
 	KeyGenerator(unsigned char username[8])
 	{
-		Hash::setBytes(username);
-
-		hash_value = Hash::hashFunction(hash_key);
-
-		Formula::setConst(hash_value + hash_key);
+		this->matrix = new HashMatrix(username);
 	}
 
-	bool keyGenerator(KeyTest* key_test)
+	bool keySearching(int x, int y)
 	{
-		if (key_test->isKey())
-			return true;
-		// cout << key_test->key << endl;
-		vector<unsigned char> next_moves;
-		key_test->getNextBestMoves(next_moves);
-
-		for (unsigned char move : next_moves)
+		if (!this->matrix->isMovable(x, y))
 		{
-			key_test->addMove(move);
-			if (keyGenerator(key_test))
-				return true;
-			key_test->removeLastMove();
+			return false;
+		}
+		if (this->matrix->hasArrived(x, y))
+		{
+			return true;
+		}
+		this->matrix->set(x, y, HashMatrix::VISITED);
+		if (this->keySearching(x + 1, y))
+		{
+			this->key = 'r' + this->key;
+			return true;
 		}
 
+		if (this->keySearching(x - 1, y))
+		{
+			this->key = 'l' + this->key;
+			return true;
+		}
+
+		if (this->keySearching(x, y + 1))
+		{
+			this->key = 'd' + this->key;
+			return true;
+		}
+
+		if (this->keySearching(x, y - 1))
+		{
+			this->key = 'u' + this->key;
+			return true;
+		}
+		this->matrix->set(x, y, HashMatrix::MOVABLE);
 		return false;
 	}
 
 
 	string getKey()
 	{
-		Validate validate(hash_value, hash_key);
-		hash_value += hash_key;
-		unsigned char value_1 = Hash::hashFunction(hash_value);	// AC
-		unsigned char value_2 = Hash::hashFunction(hash_value);	// B0
-		unsigned char value_3,	// B4
-			value_4;	// B8
-
-		while ((value_3 = Hash::hashFunction(hash_value)) == value_1);
-		while ((value_4 = Hash::hashFunction(hash_value)) == value_2);
-
-		KeyTest key_test(value_1, value_2, value_3, value_4, &validate);
-
-		return (this->keyGenerator(&key_test)) ? key_test.key : "unsolvable";
+		Point2D source = this->matrix->getSource();
+		return (this->keySearching(source.x, source.y)) ? key : "unsolvable";
 	}
+private:
+	HashMatrix* matrix;
+	string key;
 };
 
 void main()
 {
-	//int arr[] = { 20,20,20,20,20,23,20,20,20,23,20,20,23,20,20,23,20,20,23,23,20,23,20,23,20,23,23,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,23,20,23,20,20,20,23,20,20,20,20,20,20,23,20,23,23,20,20,23,20,20,23,20,20,20,20,20,20,23,20,20,23,20,23,23,20,20,20,23,20,23,20,20,23,20,20,20,20,20,23,20,23,20,23,20,20,20,20,23,20,23,20,23,20,20,20,20,23,20,20,23,20,20,23,20,23,23,20,20,20,23,20,23,20,23,20,20,23,23,23,20,23,20,20,20,20,20,20,20,20,20,20,20,20,20,20,23,20,20,20,23,20,20,20,23,20,23,20,23,20,20,20,23,20,20,20,20,20,23,20,20,23,20,23,20,20,23,23,20,20,20,20,20,20,23,20,20,23,20,20,20,23,20,23,20,20,20,20,23,23,20,23,20,66,20,20,23,23,20,20,20,23,20,20,20,20,20,20,23,20,23,23,20,23,20,23,20,20,20,23,20,20,20,23,20,20,23,20,23,20,23,20,23,20,20,20,20,20,23,23,20,20,20,20,23,20,23,20,20,20,20,23,20,20,23,20,20,23,20,23,23,20,20,20,20,23,23,20,20,20,20,20,20,20,23,20,20,20,20,20,23,20,20,23,20,23,20,20,20,23,20,20,23,20,20,20,20,20,20,20,20,23,23,20,20,20,20,23,20,20,23,23,23,20,20,20,23,20,20,23,20,23,20,20,20,20,23,20,20,20,20,23,20,20,23,20,20,23,23,23,20,20,20,20,20,23,23,23,20,23,20,20,20,20,20,20,20,23,20,23,20,23,20,23,20,23,23,20,23,23,23,20,23,20,20,20,20,20,23,23,23,20,23,20,23,20,20,20,20,20,20,23,20,20,20,20,20,20,20,20,23,23,20,23,23,20,20,20,20,20,20,20,20,23,20,23,20,20,20,23,23,20,23,23,23,20,20,20,20,20,23,23,73,23,23,20,20,20,23,20,20,23,20,20,20,20,20,20,23,20,20,20,20,20,20,23,20,20,20,20,20,20,20,20,20,20,20,20,23,23,20,20,20,20,20,23,20,20,20,20,20,20,20,20,20,20,20,20,20,23,20,20,20,20,20,20,20,23,23,20,20,20,20,20,20,20,20,23,23,20,23,23,20,23,23,23,20,20,20,23,20,20,23,20,20,23,20,20,20,23,23,20,20,20,23,23,20,20,23,20,23,20,20,20,20,20,20,20,20,23,20,20,20,20,20,23,20,20,20,20,20,23,20,20,20,23,20,20,23,20,23,20,20,20,23,23,20,20,23,20,23,20,20,20,20,23,20,20,20,20,23,23,20,20,20,20,20,20,20,20,20,20,20,20,20 };
-	//int x = 18;
-	//int y = 2;
-	//string key;
-	//findKey(x, y, arr, key);
-	//system("pause");
 	unsigned char username[8] = { 0 };
 
 	cout << "Nhap vao username: ";
 	cin >> username;
-
 	KeyGenerator key_gen(username);
 	string key = key_gen.getKey();
 
