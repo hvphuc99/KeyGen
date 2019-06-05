@@ -1,5 +1,3 @@
-#include <iostream>
-using namespace std;
 #include "Table.h"
 
 Table *Table::manage_table_value = NULL;
@@ -34,7 +32,7 @@ Table * Table::createTable()
 	return manage_table_value;
 }
 
-int Table::operator[](int pos)
+unsigned int Table::operator[](int pos)
 {
 	return manage_table_value->table_value[pos];
 }

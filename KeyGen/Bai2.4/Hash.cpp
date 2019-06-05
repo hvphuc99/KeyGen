@@ -5,10 +5,9 @@ Hash::Hash(string arg)
 	this->str_input = arg;
 }
 
-unsigned char* Hash::hash4ByteTo8Byte()
+string Hash::hash4ByteTo8Byte()
 {
-	string copy_str_input = this->str_input;
-	unsigned int edx = *(unsigned int*)copy_str_input.c_str(); //convert 4 byte char to int
+	unsigned int edx = *(unsigned int*)this->str_input.c_str(); //convert 4 byte char to int
 	unsigned int eax = 0xd1fc1e8f;
 	unsigned int ecx = 0xc6ef3720;
 	unsigned int ebx = 0x3beabc9a;
@@ -42,13 +41,34 @@ unsigned char* Hash::hash4ByteTo8Byte()
 		edi = edi + ecx;
 		esi = esi ^ edi;
 		ebx = ebx - esi;
-		unsigned char result[9] = { 0 };
-		for (int i = 0; i < 4; i++) {
-			result[i] = ebx & 0xff;
-			ebx = ebx << 8;
-			result[i + 4] = eax & 0xff;
-			eax = eax << 8;
-		}
-		return result;
+		
+		
 	}
+	string result;
+	for (int i = 0; i < 4; i++) {
+		result.push_back(ebx & 0xff);
+		ebx = ebx >> 8;
+	}
+	for (int i = 4; i < 8; i++) {
+		result.push_back(eax & 0xff);
+		eax = eax >> 8;
+	}
+	return result;
+}
+
+unsigned int Hash::hash8ByteTo4Byte(Table *table_inst)
+{
+	string esi = this->str_input;
+	unsigned int ebx = 0xffffffff;
+	unsigned int ecx;
+	for (int edx = 0; edx < 8; edx++) {
+		ecx = 0;
+		ecx = esi[edx];
+		ecx = ecx ^ ebx;
+		ecx = ecx & 0xff;
+		ebx = ebx >> 8;
+		ebx = ebx ^ (*table_inst)[ecx];
+	}
+	ebx = ~ebx;
+	return ebx;
 }
