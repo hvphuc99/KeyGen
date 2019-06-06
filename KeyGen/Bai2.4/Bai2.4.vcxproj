@@ -117,12 +117,14 @@
   <ItemGroup>
     <ClCompile Include="Bit.cpp" />
     <ClCompile Include="Hash.cpp" />
+    <ClCompile Include="Key.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Table.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bit.h" />
     <ClInclude Include="Hash.h" />
+    <ClInclude Include="Key.h" />
     <ClInclude Include="Table.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
