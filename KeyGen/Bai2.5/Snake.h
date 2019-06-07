@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "Matrix.h"
 
 class Point2D;
 class Matrix;
@@ -7,12 +8,12 @@ class Matrix;
 class Snake
 {
 public:
-	Snake(Point2D start, Matrix* matrix);
+	Snake(Matrix* matrix);
 
 	Point2D getCurrentPosition();
-	bool isMovable(char x, char y, Matrix::state current_destination);
+	bool isMovable(char x, char y, state current_destination);
 
-	bool hasArrived(char x, char y, Matrix::state current_destination);
+	bool hasArrived(char x, char y, state current_destination);
 
 	void move(char x, char y);
 

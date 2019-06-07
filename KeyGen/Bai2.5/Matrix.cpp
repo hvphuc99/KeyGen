@@ -1,6 +1,6 @@
-
 #include "Matrix.h"
 #include "Snake.h"
+
 
 Matrix::Matrix(string username)
 {
@@ -11,7 +11,7 @@ Matrix::Matrix(string username)
 		this->matrix[i] = new state[this->size];
 		for (int j = 0; j < this->size; j++)
 		{
-			this->matrix[i][j] = FREE;
+			this->matrix[i][j] = state::FREE;
 		}
 	}
 
@@ -30,6 +30,8 @@ Matrix::Matrix(string username)
 	unsigned char hash = sum;
 	unsigned char position = 0;
 
+	num_of_foods = username.length();
+
 	for (int i = 0, length = username.length(); i < length; i++)
 	{
 		unsigned char x_food, y_food;
@@ -37,7 +39,7 @@ Matrix::Matrix(string username)
 
 		x_food = position / this->size;
 		y_food = position % this->size;
-		this->matrix[x_food][y_food] = FOOD;
+		this->matrix[x_food][y_food] = state::FOOD;
 		while (true)
 		{
 			// cal position
@@ -48,7 +50,6 @@ Matrix::Matrix(string username)
 			hash--;
 		}
 
-		this->food.push_back(Point2D(x_food, y_food));
 	}
 
 	// calculate destination
@@ -62,13 +63,13 @@ Matrix::Matrix(string username)
 		x_destination = position / this->size;
 		y_destination = position % this->size;
 
-		if (this->matrix[x_destination][y_destination] != FOOD)
+		if (this->matrix[x_destination][y_destination] != state::FOOD)
 		{
 			break;
 		}
 		hash--;
 	}
-	this->matrix[x_destination][y_destination] = DESTINATION;
+	this->matrix[x_destination][y_destination] = state::DESTINATION;
 
 	// calculate snake start
 
@@ -79,36 +80,35 @@ Matrix::Matrix(string username)
 	{
 		x_snake = position / this->size;
 		y_snake = position % this->size;
-		if (this->matrix[x_snake][y_snake] != FOOD && this->matrix[x_snake][y_snake] != DESTINATION)
+		if (this->matrix[x_snake][y_snake] != state::FOOD && this->matrix[x_snake][y_snake] != state::DESTINATION)
 		{
 			break;
 		}
 		position--;
 	}
-	this->matrix[x_snake][y_snake] = SNAKE;
-
+	
 	// init snake
-	this->snake = new Snake(Point2D(x_snake, y_snake), this);
+	snake = Point2D(x_snake, y_snake);
 	//this->print();
 }
 
 int Matrix::getNumberOfFood()
 {
-	return this->food.size();
+	return num_of_foods;
 }
 
 bool Matrix::isValid(char x, char y)
 {
-	return !(x >= 0 && x < this->size && y >= 0 && y < this->size);
+	return (x >= 0 && x < this->size && y >= 0 && y < this->size);
 }
 
-Matrix::state Matrix::getValue(char x, char y)
+state Matrix::getValue(char x, char y)
 {
 	return this->matrix[x][y];
 }
 
 
-void Matrix::setValue(char x, char y, Matrix::state value)
+void Matrix::setValue(char x, char y, state value)
 {
 	this->matrix[x][y] = value;
 }
@@ -121,7 +121,6 @@ Matrix::~Matrix()
 	}
 	delete[] this->matrix;
 
-	delete this->snake;
 }
 
 void Matrix::print()
@@ -132,16 +131,16 @@ void Matrix::print()
 		{
 			switch (this->matrix[i][j])
 			{
-			case SNAKE:
+		/*	case state::SNAKE:
 				cout << "99 ";
-				break;
-			case FOOD:
+				break;*/
+			case state::FOOD:
 				cout << "CC ";
 				break;
-			case DESTINATION:
+			case state::DESTINATION:
 				cout << "DD ";
 				break;
-			case FREE:
+			case state::FREE:
 				cout << "00 ";
 				break;
 			}
@@ -151,7 +150,7 @@ void Matrix::print()
 }
 
 
-Snake* Matrix::getSnake()
+Point2D* Matrix::getStartPoisition()
 {
-	return this->snake;
+	return &this->snake;
 }

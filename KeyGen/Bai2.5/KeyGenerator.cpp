@@ -4,8 +4,13 @@
 #include "Snake.h"
 
 
-bool KeyGenerator::keySearching(char x, char y, Matrix::state current_destination)
+bool KeyGenerator::keySearching(char x, char y, state current_destination)
 {
+	if (this->snake == NULL)
+	{
+		this->snake = new Snake(this->matrix);
+	}
+
 	if (!this->snake->isMovable(x, y, current_destination))
 	{
 		return false;
@@ -14,33 +19,33 @@ bool KeyGenerator::keySearching(char x, char y, Matrix::state current_destinatio
 	{
 		return true;
 	}
-	this->matrix->setValue(x, y, Matrix::VISITED);
+	this->matrix->setValue(x, y, state::VISITED);
 	this->snake->move(x, y);
 	if (this->keySearching(x + 1, y, current_destination))
 	{
-		this->matrix->setValue(x, y, Matrix::FREE);
+		this->matrix->setValue(x, y, state::FREE);
 		this->path = '0' + this->path;
 		return true;
 	}
 	if (this->keySearching(x - 1, y, current_destination))
 	{
-		this->matrix->setValue(x, y, Matrix::FREE);
+		this->matrix->setValue(x, y, state::FREE);
 		this->path = '1' + this->path;
 		return true;
 	}
 	if (this->keySearching(x, y - 1, current_destination))
 	{
-		this->matrix->setValue(x, y, Matrix::FREE);
+		this->matrix->setValue(x, y, state::FREE);
 		this->path = '2' + this->path;
 		return true;
 	}
 	if (this->keySearching(x, y + 1, current_destination))
 	{
-		this->matrix->setValue(x, y, Matrix::FREE);
+		this->matrix->setValue(x, y, state::FREE);
 		this->path = '3' + this->path;
 		return true;
 	}
-	this->matrix->setValue(x, y, Matrix::FREE);
+	this->matrix->setValue(x, y, state::FREE);
 	this->snake->unmove(x, y);
 
 }
@@ -50,11 +55,12 @@ bool KeyGenerator::keySearching()
 	Point2D current_position;
 	for (int i = 0, size = this->matrix->getNumberOfFood(); i < size; i++)
 	{
-		current_position = this->snake->getCurrentPosition();
+		current_position = (this->snake == NULL) 
+			? *this->matrix->getStartPoisition() : this->snake->getCurrentPosition();
 		this->path = "";
-		if (keySearching(current_position.x, current_position.y, Matrix::FOOD))
+		if (keySearching(current_position.x, current_position.y, state::FOOD))
 		{
-			this->key += this->path;
+			this->key += this->convertPathToKey(this->path);
 		}
 		else
 		{
@@ -64,9 +70,9 @@ bool KeyGenerator::keySearching()
 
 	current_position = this->snake->getCurrentPosition();
 	this->path = "";
-	if (keySearching(current_position.x, current_position.y, Matrix::DESTINATION))
+	if (keySearching(current_position.x, current_position.y, state::DESTINATION))
 	{
-		this->key += this->path;
+		this->key += this->convertPathToKey(this->path);
 	}
 	else
 	{
@@ -105,14 +111,16 @@ string KeyGenerator::convertPathToKey(string path)
 	for (char i = 0, len = path.length(); i < len; i++)
 	{
 		char j = i;
-		while (path[i] == path[j])
+		char move = 1;
+		while (path[i] == path[j] && move < 4)
 		{
 			i++;
+			move++;
 		}
 
-		char move = j - i + 1;
 		key = key + toHex(path[i] - '0' + 4 * (move - 1));
 	}
+	return key;
 }
 
 
@@ -120,11 +128,13 @@ string KeyGenerator::convertPathToKey(string path)
 KeyGenerator::KeyGenerator(string username)
 {
 	this->matrix = new Matrix(username);
-	this->snake = this->matrix->getSnake();
+	this->snake = NULL;
 }
 
 
 KeyGenerator::~KeyGenerator()
 {
 	delete this->matrix;
+	if (this->snake != NULL)
+		delete this->snake;
 }
