@@ -111,13 +111,13 @@ string KeyGenerator::convertPathToKey(string path)
 	for (char i = 0, len = path.length(); i < len; i++)
 	{
 		char j = i;
-		char move = 1;
+		char move = 0;
 		while (path[i] == path[j] && move < 4)
 		{
 			i++;
 			move++;
 		}
-
+		i--;
 		key = key + toHex(path[i] - '0' + 4 * (move - 1));
 	}
 	return key;
