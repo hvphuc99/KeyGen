@@ -6,7 +6,6 @@ Table * Table::createTable()
 {
 	if (manage_table_value == NULL) {
 		manage_table_value = new Table;
-
 		unsigned int ecx, cl; //cl contain 8 bit last of ecx
 		unsigned int eax = 0;
 		for (int esi = 0; esi < 0x100; esi++) {

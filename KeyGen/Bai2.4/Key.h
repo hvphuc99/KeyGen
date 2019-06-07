@@ -11,6 +11,7 @@ public:
 	Key();
 	unsigned int hashKey(string _4Char_first);
 	string find4CharFirstOfKey();
+	bool isValid(string str);
 	vector<string> find8CharRestOfKey();
 	void findKey();
 private:
