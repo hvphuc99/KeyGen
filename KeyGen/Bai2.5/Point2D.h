@@ -13,6 +13,7 @@ public:
 	{
 		this->x = a.x;
 		this->y = a.y;
+		return (*this);
 	}
 	Point2D()
 	{

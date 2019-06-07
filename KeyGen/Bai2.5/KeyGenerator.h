@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
+#include "Matrix.h"
 
 class Snake;
-class Matrix;
+//class Matrix;
+// enum class state;
 
 using namespace std;
 class KeyGenerator
@@ -12,7 +14,7 @@ public:
 
 	~KeyGenerator();
 
-	bool keySearching(char x, char y, Matrix::state current_destination);
+	bool keySearching(char x, char y, state current_destination);
 	bool keySearching();
 	
 	string get();
