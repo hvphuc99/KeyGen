@@ -15,22 +15,28 @@ bool KeyGenerator::keySearching(char x, char y, state current_destination)
 	{
 		return false;
 	}
+	this->snake->move(x, y);
 	if (this->snake->hasArrived(x, y, current_destination))
 	{
 		return true;
 	}
 	this->matrix->setValue(x, y, state::VISITED);
-	this->snake->move(x, y);
+	if (this->keySearching(x - 1, y, current_destination))
+	{
+		this->matrix->setValue(x, y, state::FREE);
+		this->path = '1' + this->path;
+		return true;
+	}
 	if (this->keySearching(x + 1, y, current_destination))
 	{
 		this->matrix->setValue(x, y, state::FREE);
 		this->path = '0' + this->path;
 		return true;
 	}
-	if (this->keySearching(x - 1, y, current_destination))
-	{
+	if (this->keySearching(x, y + 1, current_destination))
+	{	
 		this->matrix->setValue(x, y, state::FREE);
-		this->path = '1' + this->path;
+		this->path = '3' + this->path;
 		return true;
 	}
 	if (this->keySearching(x, y - 1, current_destination))
@@ -39,14 +45,8 @@ bool KeyGenerator::keySearching(char x, char y, state current_destination)
 		this->path = '2' + this->path;
 		return true;
 	}
-	if (this->keySearching(x, y + 1, current_destination))
-	{
-		this->matrix->setValue(x, y, state::FREE);
-		this->path = '3' + this->path;
-		return true;
-	}
 	this->matrix->setValue(x, y, state::FREE);
-	this->snake->unmove(x, y);
+	this->snake->unmove();
 
 }
 
@@ -55,12 +55,21 @@ bool KeyGenerator::keySearching()
 	Point2D current_position;
 	for (int i = 0, size = this->matrix->getNumberOfFood(); i < size; i++)
 	{
-		current_position = (this->snake == NULL) 
-			? *this->matrix->getStartPoisition() : this->snake->getCurrentPosition();
+		if (this->snake == NULL)
+		{
+			current_position = *this->matrix->getStartPoisition();
+		}
+		else {
+			current_position = this->snake->getCurrentPosition();
+			this->snake->unmove();
+		}
 		this->path = "";
 		if (keySearching(current_position.x, current_position.y, state::FOOD))
 		{
+			this->snake->increaseLength();
 			this->key += this->convertPathToKey(this->path);
+			Point2D pos = this->snake->getCurrentPosition();
+			this->matrix->setValue(pos.x, pos.y, state::FREE);
 		}
 		else
 		{
@@ -69,6 +78,7 @@ bool KeyGenerator::keySearching()
 	}
 
 	current_position = this->snake->getCurrentPosition();
+	this->snake->unmove();
 	this->path = "";
 	if (keySearching(current_position.x, current_position.y, state::DESTINATION))
 	{
@@ -76,7 +86,7 @@ bool KeyGenerator::keySearching()
 	}
 	else
 	{
-		false;
+		return false;
 	}
 
 	return true;
