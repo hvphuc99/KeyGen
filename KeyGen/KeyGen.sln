@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Bai2.3", "KeyGen\KeyGen.vcxproj", "{770D5E66-7AF8-4522-BAD9-EA69CC5F1131}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Bai2.4", "Bai2.4\Bai2.4.vcxproj", "{C22A80DA-440C-4613-99F6-B51B5857B6D1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Bai2.5", "Bai2.5\Bai2.5.vcxproj", "{184B7320-CA47-4508-B9D5-453C79D51815}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,14 @@ Global
 		{C22A80DA-440C-4613-99F6-B51B5857B6D1}.Release|x64.Build.0 = Release|x64
 		{C22A80DA-440C-4613-99F6-B51B5857B6D1}.Release|x86.ActiveCfg = Release|Win32
 		{C22A80DA-440C-4613-99F6-B51B5857B6D1}.Release|x86.Build.0 = Release|Win32
+		{184B7320-CA47-4508-B9D5-453C79D51815}.Debug|x64.ActiveCfg = Debug|x64
+		{184B7320-CA47-4508-B9D5-453C79D51815}.Debug|x64.Build.0 = Debug|x64
+		{184B7320-CA47-4508-B9D5-453C79D51815}.Debug|x86.ActiveCfg = Debug|Win32
+		{184B7320-CA47-4508-B9D5-453C79D51815}.Debug|x86.Build.0 = Debug|Win32
+		{184B7320-CA47-4508-B9D5-453C79D51815}.Release|x64.ActiveCfg = Release|x64
+		{184B7320-CA47-4508-B9D5-453C79D51815}.Release|x64.Build.0 = Release|x64
+		{184B7320-CA47-4508-B9D5-453C79D51815}.Release|x86.ActiveCfg = Release|Win32
+		{184B7320-CA47-4508-B9D5-453C79D51815}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
