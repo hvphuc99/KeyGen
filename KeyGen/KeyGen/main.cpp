@@ -172,6 +172,7 @@ public:
 	KeyGenerator(unsigned char username[8])
 	{
 		this->matrix = new HashMatrix(username);
+		this->matrix->print();
 	}
 
 	bool keySearching(int x, int y)

@@ -1,11 +1,11 @@
 #include "Matrix.h"
 #include "Snake.h"
-
+#include <Windows.h>
 
 Matrix::Matrix(string username)
 {
 	// init matrix
-	this->matrix = new state * [this->size];
+	this->matrix = new state *[this->size];
 	for (int i = 0; i < this->size; i++)
 	{
 		this->matrix[i] = new state[this->size];
@@ -30,25 +30,33 @@ Matrix::Matrix(string username)
 	unsigned char hash = sum;
 	unsigned char position = 0;
 
-	num_of_foods = username.length();
+	username_length = username.length();
+
 
 	for (int i = 0, length = username.length(); i < length; i++)
 	{
 		unsigned char x_food, y_food;
 		position = username[i] ^ hash;
-
-		x_food = position / this->size;
-		y_food = position % this->size;
-		this->matrix[x_food][y_food] = state::FOOD;
-		while (true)
+		do
 		{
-			// cal position
+			x_food = position / this->size;
+			y_food = position % this->size;
 			hash -= position;
-			// add food				// do again if position = 0
-			if (hash != 0)
+			if (this->matrix[x_food][y_food] != state::FOOD)
+			{
+
+				this->matrix[x_food][y_food] = state::FOOD;
+				this->foods.push_back(Point2D(x_food, y_food));
 				break;
-			hash--;
-		}
+			}
+			else {
+				// cal position
+				// add food				// do again if position = 0
+				if (hash != 0)
+					break;
+				hash--;
+			}
+		} while (true);
 
 	}
 
@@ -70,7 +78,8 @@ Matrix::Matrix(string username)
 		hash--;
 	}
 	this->matrix[x_destination][y_destination] = state::DESTINATION;
-
+	des.x = x_destination;
+	des.y = y_destination;
 	// calculate snake start
 
 	position = hash;
@@ -86,7 +95,7 @@ Matrix::Matrix(string username)
 		}
 		position--;
 	}
-	
+
 	// init snake
 	snake = Point2D(x_snake, y_snake);
 	//this->print();
@@ -94,9 +103,12 @@ Matrix::Matrix(string username)
 
 int Matrix::getNumberOfFood()
 {
-	return num_of_foods;
+	return foods.size();
 }
-
+bool Matrix::isKeyExist()
+{
+	return (foods.size() == username_length);
+}
 bool Matrix::isValid(char x, char y)
 {
 	return (x >= 0 && x < this->size && y >= 0 && y < this->size);
@@ -129,28 +141,39 @@ void Matrix::print()
 	{
 		for (int j = 0; j < this->size; j++)
 		{
+			if (i == this->snake.x && j == this->snake.y) {
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE);
+				cout << "99 ";
+				continue;
+			}
 			switch (this->matrix[i][j])
 			{
-		/*	case state::SNAKE:
-				cout << "99 ";
-				break;*/
+				/*case state::SNAKE:
+					cout << "99 ";
+					break;*/
 			case state::FOOD:
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
 				cout << "CC ";
 				break;
 			case state::DESTINATION:
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED);
 				cout << "DD ";
 				break;
 			case state::FREE:
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN);
 				cout << "00 ";
 				break;
 			}
 		}
 		cout << endl;
 	}
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 }
 
 
-Point2D* Matrix::getStartPoisition()
+Point2D Matrix::getStartPoisition()
 {
-	return &this->snake;
+	return this->snake;
 }
+
+

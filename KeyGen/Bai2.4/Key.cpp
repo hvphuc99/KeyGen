@@ -49,15 +49,26 @@ string Key::find4CharFirstOfKey()
 	}
 }
 
+bool Key::isValid(string str)
+{
+	for (int i = 0; i < str.size(); i++) {
+		if (str[i] < '0' || str[i] > '9') {
+			if (str[i] < 'A' || str[i] > 'F')
+				return false;
+		}
+	}
+	return true;
+}
+
 vector<string> Key::find8CharRestOfKey()
 {
 	vector<string> result;
-	string _8Char_rest("4a4a4a1d");
-	for (char a2 = 'C'; a2 <= 'f'; a2++) {
+	string _8Char_rest("4a4a4a1a");
+	for (char a2 = 'A'; a2 <= 'f'; a2++) {
 		_8Char_rest[1] = a2;
-		for (char a4 = 'C'; a4 <= 'f'; a4++) {
+		for (char a4 = 'A'; a4 <= 'f'; a4++) {
 			_8Char_rest[3] = a4;
-			for (char a6 = 'C'; a6 <= 'f'; a6++) {
+			for (char a6 = 'A'; a6 <= 'f'; a6++) {
 				_8Char_rest[5] = a6;
 				int count = 1;
 				while (count <= 2) {
@@ -67,10 +78,12 @@ vector<string> Key::find8CharRestOfKey()
 						_8Char_rest[7] = 'D';
 					string copy_8Char_rest = _8Char_rest;
 					copy_8Char_rest = supportString::upperCase(copy_8Char_rest);
-					Hash convert8Byte(copy_8Char_rest);
-					unsigned int check = convert8Byte.hash8ByteTo4Byte(this->table_inst);
-					if (check == 0xe367db0c) {
-						result.push_back(_8Char_rest);
+					if (isValid(copy_8Char_rest)) {
+						Hash convert8Byte(copy_8Char_rest);
+						unsigned int check = convert8Byte.hash8ByteTo4Byte(this->table_inst);
+						if (check == 0xe367db0c) {
+							result.push_back(_8Char_rest);
+						}
 					}
 					count++;
 				}

@@ -1,5 +1,5 @@
 #pragma once
-
+#include <math.h>
 
 class Point2D
 {
@@ -21,6 +21,10 @@ public:
 		this->y = 0;
 	}
 	char x, y;
-
+	float distance(Point2D inp) {
+		return sqrt(
+			(this->x - inp.x) * (this->x - inp.x) + (this->y - inp.y) * (this->y - inp.y)
+		);
+	}
 };
 
