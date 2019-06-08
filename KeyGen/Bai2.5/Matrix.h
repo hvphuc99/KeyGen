@@ -15,8 +15,6 @@ public:
 	Matrix(string username);
 
 	int getNumberOfFood();
-	//D53CCC82DD2D9FFFBCC0	
-	//CC02DDD9
 	bool isValid(char x, char y);
 	state getValue(char x, char y);
 	void setValue(char x, char y, state value);

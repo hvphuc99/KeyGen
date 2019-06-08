@@ -6,12 +6,6 @@
 
 bool KeyGenerator::keySearching(char x, char y, state current_destination, Point2D des)
 {
-
-
-	/*if (!this->snake->isMovable(x, y, current_destination))
-	{
-		return false;
-	}*/
 	this->snake->move(x, y);
 	if (this->snake->hasArrived(x, y, current_destination))
 	{
