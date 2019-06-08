@@ -1,5 +1,6 @@
 #pragma once
-#include <vector>
+#include <list>
+#include <stack>
 #include "Matrix.h"
 
 class Point2D;
@@ -15,13 +16,14 @@ public:
 
 	bool hasArrived(char x, char y, state current_destination);
 
+	void increaseLength();
 	void move(char x, char y);
 
-	void unmove(char x, char y);
+	void unmove();
 private:
-	std::vector<Point2D> position;
+	std::list<Point2D> position;
 	Matrix* matrix;
-	Point2D last_move;
+	std::stack<Point2D> last_move;
 };
 
 
