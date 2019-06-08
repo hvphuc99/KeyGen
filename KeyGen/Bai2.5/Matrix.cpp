@@ -1,5 +1,5 @@
 #include "Matrix.h"
-#include "Snake.h"
+// #include "Snake.h"
 
 
 Matrix::Matrix(string username)
@@ -30,7 +30,7 @@ Matrix::Matrix(string username)
 	unsigned char hash = sum;
 	unsigned char position = 0;
 
-	num_of_foods = username.length();
+	// num_of_foods = username.length();
 
 	for (int i = 0, length = username.length(); i < length; i++)
 	{
@@ -40,6 +40,7 @@ Matrix::Matrix(string username)
 		x_food = position / this->size;
 		y_food = position % this->size;
 		this->matrix[x_food][y_food] = state::FOOD;
+		this->foods.push_back(Point2D(x_food, y_food));
 		while (true)
 		{
 			// cal position
@@ -70,6 +71,7 @@ Matrix::Matrix(string username)
 		hash--;
 	}
 	this->matrix[x_destination][y_destination] = state::DESTINATION;
+	this->destination = Point2D(x_destination, y_destination);
 
 	// calculate snake start
 
@@ -86,32 +88,34 @@ Matrix::Matrix(string username)
 		}
 		position--;
 	}
-	
+
 	// init snake
 	snake = Point2D(x_snake, y_snake);
-	//this->print();
+	this->matrix[x_snake][y_snake] = state::SNAKE;
+
+	this->print();
 }
 
 int Matrix::getNumberOfFood()
 {
-	return num_of_foods;
+	return foods.size();
 }
 
-bool Matrix::isValid(char x, char y)
-{
-	return (x >= 0 && x < this->size && y >= 0 && y < this->size);
-}
-
-state Matrix::getValue(char x, char y)
-{
-	return this->matrix[x][y];
-}
-
-
-void Matrix::setValue(char x, char y, state value)
-{
-	this->matrix[x][y] = value;
-}
+//bool Matrix::isValid(char x, char y)
+//{
+//	return (x >= 0 && x < this->size && y >= 0 && y < this->size);
+//}
+//
+//state Matrix::getValue(char x, char y)
+//{
+//	return this->matrix[x][y];
+//}
+//
+//
+//void Matrix::setValue(char x, char y, state value)
+//{
+//	this->matrix[x][y] = value;
+//}
 
 Matrix::~Matrix()
 {
@@ -131,9 +135,9 @@ void Matrix::print()
 		{
 			switch (this->matrix[i][j])
 			{
-		/*	case state::SNAKE:
+			case state::SNAKE:
 				cout << "99 ";
-				break;*/
+				break;
 			case state::FOOD:
 				cout << "CC ";
 				break;
@@ -150,7 +154,17 @@ void Matrix::print()
 }
 
 
-Point2D* Matrix::getStartPoisition()
+Point2D Matrix::getStartPoisition()
 {
-	return &this->snake;
+	return this->snake;
+}
+
+Point2D Matrix::getFood(char i)
+{
+	return this->foods[i];
+}
+
+Point2D Matrix::getDestination()
+{
+	return this->destination;
 }

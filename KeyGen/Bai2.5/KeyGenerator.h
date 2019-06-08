@@ -2,7 +2,7 @@
 #include <string>
 #include "Matrix.h"
 
-class Snake;
+// class Snake;
 //class Matrix;
 // enum class state;
 
@@ -14,15 +14,17 @@ public:
 
 	~KeyGenerator();
 
-	bool keySearching(char x, char y, state current_destination);
-	bool keySearching();
-	
 	string get();
+	
+private:
+	//bool keySearching(char x, char y, state current_destination);
+	bool keySearching();
 	char toHex(char x);
 	string convertPathToKey(string path);
+	string getPath(Point2D source, Point2D destination);
 private:
 	Matrix* matrix;
-	Snake* snake;
+	// Snake* snake;
 	string key;
 	string path;
 };
