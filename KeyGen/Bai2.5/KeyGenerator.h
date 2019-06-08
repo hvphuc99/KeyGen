@@ -14,12 +14,14 @@ public:
 
 	~KeyGenerator();
 
-	bool keySearching(char x, char y, state current_destination);
+	bool keySearching(char x, char y, state current_destination, Point2D des);
 	bool keySearching();
 	
+	int getBestMove(Point2D s, Point2D f, state current_destination);
 	string get();
 	char toHex(char x);
 	string convertPathToKey(string path);
+	void sortFoods(Point2D sr);
 private:
 	Matrix* matrix;
 	Snake* snake;
